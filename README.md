@@ -121,6 +121,11 @@ echo "  Additional Args: ", additional_args
 
 ```
 
+```bash
+$ test these are extra args
+  Additional Args: @[these, are, extra, args]
+```
+
 ## Sequence arguments
 
 gcap can extract lists of arguments into a seq for you
