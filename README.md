@@ -92,7 +92,7 @@ import gcap
 var i: int = 42
 
 var cmd = newCmdLine("A short sample program", "0.2.4")
-cmd.add(newValueArg[int]("i", "myinteger", "Some integer arg", true, i))
+cmd.add(newValueArg[int]("i", "myinteger", "Some integer arg", false, i))
 cmd.parse()
 
 echo "  i: ", i
