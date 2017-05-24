@@ -89,17 +89,21 @@ Simply give your variables a value before calling `parse()`. They will be left u
 ```nim
 import gcap
 
-var i: int
-var b: bool
+var i: int = 42
 
 var cmd = newCmdLine("A short sample program", "0.2.4")
 cmd.add(newValueArg[int]("i", "myinteger", "Some integer arg", true, i))
-cmd.add(newSwitchArg("b", "mybool", "Boolean switch arg", false, b))
 cmd.parse()
 
 echo "  i: ", i
-echo "  b: ", b
 
+```
+
+```bash
+$ test
+ i: 42
+$ test -i 24
+ i: 24
 ```
 
 ## Additional arguments
