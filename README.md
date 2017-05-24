@@ -47,6 +47,40 @@ echo "  b: ", b
 
 ```
 
+```bash
+$ test -b
+
+PARSE ERROR:
+        Required argument 'myinteger' is missing!
+
+
+test.exe  -- version 0.2.4
+
+USAGE:
+
+    test.exe   -i=<int> [-b] [-v] [-h]
+
+Where:
+
+  -i=<int> --myinteger=<int>
+    Some integer arg
+
+
+  -b, --mybool
+    Boolean switch arg
+
+
+  -v, --version
+    Displays version information
+
+
+  -h, --help
+    Displays usage information
+
+
+A short sample program
+```
+
 ## Default values
 
 Simply give your variables a value before calling `parse()`. They will be left untouched if the user does not pass an argument overwriting them.
