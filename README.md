@@ -47,6 +47,8 @@ echo "  b: ", b
 
 ```
 
+And the help output if the required parameter `-i`/`--myinteger` is missing:
+
 ```bash
 $ test -b
 
