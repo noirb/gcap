@@ -151,7 +151,7 @@ method parse(this: CmdLine, additional_args: ptr seq[string] = nil, onFailure: p
   this.parser = initOptParser(argv)
   var curr = -1
 
-  for kind, key, val in getopt():
+  for kind, key, val in getopt(this.parser):
     try:
       case kind
       of cmdArgument:
