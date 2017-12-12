@@ -25,6 +25,19 @@ suite "gcap Basic Tests":
 
     check(b == true)
 
+  test "Simple list args":
+    var si: seq[int] = newSeq[int]()
+    var es: seq[int] = @[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    var cmd = newCmdLine("Simple list test", "0.0.1")
+    cmd.add(newValueArg[seq[int]]("si", "ints", "int list arg", true, si))
+
+    cmd.parse(argv = @["-si", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
+
+    check(si.len == es.len)
+    for i in 0..es.len-1:
+      check(si[i] == es[i])
+
   test "Default value args":
     var i: int = 42
     var s: string = "Cool String"
