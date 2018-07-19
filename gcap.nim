@@ -7,7 +7,7 @@ type
     description: string
     required:    bool
     found:       bool
-  
+
   CmdLineValueArg[T] = ref object of CmdLineArg
     val: ptr T
 
@@ -46,31 +46,47 @@ method parseArg[T](this: CmdLineValueArg[T], arg: string): bool =
   if arg.len < 1:
     return false
 
-  this.found = true
   when T is int:
-    this.val[] = parseInt(arg)
+    if not this.found:
+      this.val[] = parseInt(arg)
+    else:
+      return false
   elif T is seq[int]:
     this.val[].add(parseInt(arg))
   elif T is uint:
-    this.val[] = parseUInt(arg)
+    if not this.found:
+      this.val[] = parseUInt(arg)
+    else:
+      return false
   elif T is seq[uint]:
     this.val[].add(parseUInt(arg))
   elif T is float:
-    this.val[] = parseFloat(arg)
+    if not this.found:
+      this.val[] = parseFloat(arg)
+    else:
+      return false
   elif T is seq[float]:
     this.val[].add(parseFloat(arg))
   elif T is bool:
-    this.val[] = parseBool(arg)
+    if not this.found:
+      this.val[] = parseBool(arg)
+    else:
+      return false
   elif T is seq[bool]:
     this.val[].add(parseBool(arg))
   elif T is string:
-    this.val[] = arg
+    if not this.found:
+      this.val[] = arg
+    else:
+      return false
   elif T is seq[string]:
     this.val[].add(arg)
   else:
     this.found = false
+    return false
 
-  return this.found
+  this.found = true
+  return true
 
 method parseArg(this: CmdLineSwitchArg, arg: string): bool =
   if this.val != nil:
@@ -158,19 +174,19 @@ method parse(this: CmdLine, additional_args: ptr seq[string] = nil, onFailure: p
         if curr >= 0:
           if not this.args[curr].parseArg(key):
             curr = -1
-        elif additional_args != nil:
-          additional_args[].add(key)
+#        elif additional_args != nil:
+#          additional_args[].add(key)
       of cmdLongOption, cmdShortOption:
         case key
-        of "help", "h":
-          this.printHelp()
-          quit(QuitSuccess)
-        of "version", "v":
-          this.printVersion()
-          quit(QuitSuccess)
+          of "help", "h":
+            this.printHelp()
+            quit(QuitSuccess)
+          of "version", "v":
+            this.printVersion()
+            quit(QuitSuccess)
         var found = false
         for i,v in this.args:
-          if key == v.longname or key == v.shortname:
+          if (key == v.longname or key == v.shortname):
             found = true
             if not v.parseArg(val):
               curr = i
@@ -180,7 +196,13 @@ method parse(this: CmdLine, additional_args: ptr seq[string] = nil, onFailure: p
         if not found and curr >= 0:
           discard this.args[curr].parseArg("-" & key)
         elif additional_args != nil:
-          additional_args[].add(key)
+          if curr >= 0 and this.args[curr].found:
+            if kind == cmdShortOption:
+              additional_args[].add("-" & key)
+            elif kind == cmdLongOption:
+              additional_args[].add("--" & key)
+            else:
+              additional_args[].add(key)
           if len(val) > 0:
             additional_args[].add(val)
       of cmdEnd:
@@ -189,8 +211,15 @@ method parse(this: CmdLine, additional_args: ptr seq[string] = nil, onFailure: p
     except ValueError:
       onFailure(this, "Could not parse value: '" & key & "'")
     except:
-      onFailure(this, "Unknown error occurred while parsing commandline")
+      onFailure(this, "Unknown error occurred while parsing commandline: " & getCurrentExceptionMsg())
 
+    if curr < 0 and additional_args != nil:
+      if kind == cmdShortOption:
+        additional_args[].add("-" & key)
+      elif kind == cmdLongOption:
+        additional_args[].add("--" & key)
+      else:
+        additional_args[].add(key)
   # check that all required params are present
   for i,v in this.args:
     if v.required and not v.found:
