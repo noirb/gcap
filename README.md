@@ -26,8 +26,8 @@ If you use the `--arg:val` or `--arg=val` syntax, only the first value will be t
 
 ## Basic Usage
 
-Pass a var for each argument. After parsing they will be filled with the values from the commandline.
-Each argument requires a short name, long name, short description, and a boolean flag indicating whether they shoudl be required or not.
+Pass a `var` for each argument. After parsing they will be filled with the values from the commandline.
+Each argument requires a short name, long name, short description, and a boolean flag indicating whether or not they are required..
 
 Parsing will fail if the data on the commandline can't be parsed into the correct type for each argument or if any required argument is missing.
 
@@ -83,6 +83,8 @@ Where:
 A short sample program
 ```
 
+**Note:** The parameters `-h`/`--help` and `-v`/`--version` are automatically produced by gcap, and are thus not available for your program.
+
 ## Default values
 
 Simply give your variables a value before calling `parse()`. They will be left untouched if the user does not pass an argument overwriting them.
@@ -128,7 +130,7 @@ $ test these are extra args
 
 ## Sequence arguments
 
-gcap can extract lists of arguments into a seq for you
+gcap can extract lists of arguments into a `seq` for you
 
 ```nim
 import gcap
